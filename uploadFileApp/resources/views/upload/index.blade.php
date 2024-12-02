@@ -3,7 +3,7 @@
 @section('content')
     <div class="container mt-5">
         <h1 class="mb-4">All Files</h1>
-        <table class="table table-striped">
+        <table class="table table-striped" id="filesTable">
             <thead class="thead-dark">
                 <tr>
                     <th>Image Preview</th>
@@ -12,6 +12,7 @@
                     <th>Storage Name</th>
                     <th>Created At</th>
                     <th>Updated At</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,7 +23,11 @@
                                  alt="{{ $file->original_name }}" 
                                  style="width: 50px; height: auto;">
                         </td>
-                        <td>{{ $file->id }}</td>
+                        <td>
+                            <a href="{{ route('upload.show', ['file' => $file->storage_name]) }}">
+                                {{ $file->id }}
+                            </a>
+                        </td>
                         <td>
                             <a href="{{ route('upload.show', ['file' => $file->storage_name]) }}">
                                 {{ $file->original_name }}
@@ -31,10 +36,25 @@
                         <td>{{ $file->storage_name }}</td>
                         <td>{{ $file->created_at->format('Y-m-d H:i:s') }}</td>
                         <td>{{ $file->updated_at->format('Y-m-d H:i:s') }}</td>
+                        <td>
+                            <a href="#" data-href="{{ route('upload.destroy', $file->id) }}" class="borrar">
+                                Delete
+                            </a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        
+        <form id="formDelete" action="{{ url('') }}" method="POST">
+            @csrf
+            @method('DELETE')
+        </form>
+        
         <a href="{{ route('upload.create') }}" class="btn btn-success mt-3">Upload File</a>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('assets/scripts/script.js') }}"></script>
 @endsection

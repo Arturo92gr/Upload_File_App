@@ -69,4 +69,20 @@ class UploadController extends Controller {
         return Storage::response('exercise/' . $file->storage_name);
     }
 
+    public function destroy($id)
+    {
+        $file = Upload::findOrFail($id);
+        
+        // Delete file from storage
+        if (Storage::exists('exercise/' . $file->storage_name)) {
+            Storage::delete('exercise/' . $file->storage_name);
+        }
+        
+        // Delete database record
+        $file->delete();
+        
+        return redirect()->route('upload.index')
+            ->with('message', 'File deleted successfully!');
+    }
+
 }
