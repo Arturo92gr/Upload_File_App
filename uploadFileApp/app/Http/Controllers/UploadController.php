@@ -8,55 +8,65 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Upload;
 
 class UploadController extends Controller {
-    public function index() {
-        $files = File::all();
+    
+    public function create() 
+    {
+        return view('upload.create');
+    }
+    
+    public function index() 
+    {
+        $files = Upload::all();
         return view('upload.index', compact('files'));
     }
 
-    public function show($storedName) {
-        $file = File::where('stored_name', 'exercise/' . $storedName)->first();
-        if ($file) {
-            $storedName = str_replace('exercise/', '', $file->stored_name);
-            if (file_exists(storage_path('app/private/exercise/' . $storedName))) {
-                return response()->file(storage_path('app/private/exercise/' . $storedName));
-            }
-        }
-        abort(404, 'File not found');
-    }
-    
-    public function image(Request $request, $id) {
-        $img = File::find($id);
-        if ($img) {
-            $storedName = str_replace('exercise/', '', $img->stored_name);
-            if (file_exists(storage_path('app/private/exercise/' . $storedName))) {
-                return response()->file(storage_path('app/private/exercise/' . $storedName));
-            }
-        }
-        abort(404, 'File not found');
-    }
-
-
-    public function create() {
-        return view('upload.create');
-    }
-
-    public function store(Request $request) {
+    public function store(Request $request) 
+    {
         $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|mimes:png,jpg,gif'
         ]);
-    
-        $uploadedFile = $request->file('file');
-        $originalName = $uploadedFile->getClientOriginalName();
-        $storedName = Carbon::now()->format('Y_m_d_H_i_s') . '_' . $originalName;
-        $path = $uploadedFile->storeAs('private/exercise', $storedName, 'local');
-    
-        $file = File::create([
-            'original_name' => $originalName,
-            'stored_name' => 'exercise/' . $storedName,
-            'uploaded_at' => Carbon::now(),
-        ]);
-    
-        return redirect()->route('upload.index')->with('message', 'File uploaded successfully!');
+
+        $file = $request->file('file');
+        $originalName = $file->getClientOriginalName();
+        $storageName = Carbon::now()->format('Y_m_d_H_i_s') . '_' . $originalName;
+
+        // Store file
+        try {
+            $path = Storage::putFileAs('/exercise', $file, $storageName);
+            
+            if (!$path) {
+                throw new \Exception('Error saving file');
+            }
+
+            // Create database record
+            $upload = Upload::create([
+                'original_name' => $originalName,
+                'storage_name' => $storageName
+            ]);
+
+            return redirect()->route('upload.index')
+                ->with('message', 'File uploaded successfully!');
+
+        } catch (\Exception $e) {
+            return back()->withErrors(['file' => 'Error saving file: ' . $e->getMessage()]);
+        }
+    }
+
+    public function show($storedName) 
+    {
+        $file = Upload::where('storage_name', $storedName)->firstOrFail();
+        return view('upload.show', compact('file'));
+    }
+
+    public function image(Request $request, $id) 
+    {
+        $file = Upload::findOrFail($id);
+        
+        if (!Storage::exists('exercise/' . $file->storage_name)) {
+            abort(404, 'File not found on disk');
+        }
+
+        return Storage::response('exercise/' . $file->storage_name);
     }
 
 }

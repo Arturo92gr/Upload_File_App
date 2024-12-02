@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('upload', function (Blueprint $table) {
             $table->id();
             $table->string('original_name');
-            $table->string('storage_name')->unique();
-            $table->timestamps();
+            $table->string('storage_name');
+            $table->timestamps();  // This will create both created_at and updated_at columns
         });
     }
 
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('upload');
     }
 };

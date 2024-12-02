@@ -8,5 +8,7 @@ class Upload extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['original_name', 'stored_name', 'uploaded_at'];
+    protected $table = 'upload';
+    public $timestamps = true;
+    protected $fillable = ['original_name', 'storage_name'];
 }
