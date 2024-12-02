@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imágenes</title>
+    <title>Imágenes Guardadas</title>
 </head>
 <body>
-    <img width="100" src="{{ asset('carpeta/imagen.png') }}" alt="0">   <!-- Se puede usar url o asset -->
-    <img width="100" src="{{ url('storage/carpeta/imagen.png') }}" alt="1">
-    <img width="100" src="{{ url('storage/carpeta/nombreCambiadoImagen.png') }}" alt="2">
-    <img width="100" src="{{ url('storage/carpeta/imagen.png') }}" alt="">
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre Original</th>
+                <th>Thumbnail</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($uploads as $upload)
+                <tr>
+                    <td><a href="{{ route('upload.show', $upload->storage_name) }}">{{ $upload->id }}</a></td>
+                    <td><a href="{{ route('upload.show', $upload->storage_name) }}">{{ $upload->original_name }}</a></td>
+                    <td>
+                        <img src="{{ route('upload.show', $upload->storage_name) }}" alt="{{ $upload->original_name }}" width="100">
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
 </body>
 </html>
-<!-- <img src="{{ url('image/137') }}" alt="..."> -->

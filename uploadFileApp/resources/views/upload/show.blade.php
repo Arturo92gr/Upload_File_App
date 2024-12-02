@@ -1,1 +1,10 @@
-<img src="data:image/{{ $image->type }}; base64,{{ base64_encode($image->image) }}" alt="Se debería estar mostrando la imagen cargada.">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ...existing code... -->
+    <title>{{ $upload->original_name }}</title>
+</head>
+<body>
+    <img src="{{ route('upload.show', $upload->storage_name) }}" alt="{{ $upload->original_name }}">
+</body>
+</html>
