@@ -2,60 +2,61 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Upload;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Upload;
 
-class UploadController extends Controller
-{
-    public function index()
-    {
-        $upload = Upload::orderBy('original_name')->get();
-
-        if ($upload->isEmpty()) {
-            return redirect()->route('upload.create');
-        }
-
-        return view('upload.view', ['uploads' => $upload]);
+class UploadController extends Controller {
+    public function index() {
+        $files = File::all();
+        return view('upload.index', compact('files'));
     }
 
-    public function create()
-    {
+    public function show($storedName) {
+        $file = File::where('stored_name', 'exercise/' . $storedName)->first();
+        if ($file) {
+            $storedName = str_replace('exercise/', '', $file->stored_name);
+            if (file_exists(storage_path('app/private/exercise/' . $storedName))) {
+                return response()->file(storage_path('app/private/exercise/' . $storedName));
+            }
+        }
+        abort(404, 'File not found');
+    }
+    
+    public function image(Request $request, $id) {
+        $img = File::find($id);
+        if ($img) {
+            $storedName = str_replace('exercise/', '', $img->stored_name);
+            if (file_exists(storage_path('app/private/exercise/' . $storedName))) {
+                return response()->file(storage_path('app/private/exercise/' . $storedName));
+            }
+        }
+        abort(404, 'File not found');
+    }
+
+
+    public function create() {
         return view('upload.create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
-            'file' => 'required|file|mimes:png,jpg,gif',
+            'file' => 'required|file',
         ]);
-
-        $file = $request->file('file');
-        $originalName = $file->getClientOriginalName();
-        $extension = $file->getClientOriginalExtension();
-
-        $timestamp = now()->format('Y_m_d_H_i_s');
-        $storageName = $timestamp . '_' . pathinfo($originalName, PATHINFO_FILENAME) . '.' . $extension;
-
-        $path = $file->storeAs('private/ejercicio', $storageName);
-
-        $upload = new Upload();
-        $upload->original_name = $originalName;
-        $upload->storage_name = $storageName;
-        $upload->save();
-
-        return redirect()->route('upload.index');
+    
+        $uploadedFile = $request->file('file');
+        $originalName = $uploadedFile->getClientOriginalName();
+        $storedName = Carbon::now()->format('Y_m_d_H_i_s') . '_' . $originalName;
+        $path = $uploadedFile->storeAs('private/exercise', $storedName, 'local');
+    
+        $file = File::create([
+            'original_name' => $originalName,
+            'stored_name' => 'exercise/' . $storedName,
+            'uploaded_at' => Carbon::now(),
+        ]);
+    
+        return redirect()->route('upload.index')->with('message', 'File uploaded successfully!');
     }
 
-    public function show($storage_name)
-    {
-        $upload = Upload::where('storage_name', $storage_name)->firstOrFail();
-        $path = storage_path('app/private/ejercicio/' . $upload->storage_name);
-
-        if (!file_exists($path)) {
-            abort(404);
-        }
-
-        return response()->file($path);
-    }
 }

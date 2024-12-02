@@ -1,14 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- ...existing code... -->
-    <title>Subir Imágenes</title>
-</head>
-<body>
-    <form action="{{ route('upload.store') }}" method="post" enctype="multipart/form-data">
+@extends('base')
+
+@section('content')
+    <h1>Upload File</h1>
+    <form action="{{ route('files.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <input type="file" name="file" accept=".png,.jpg,.gif" required>
-        <input type="submit" value="Subir">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
     </form>
-</body>
-</html>
+@endsection
