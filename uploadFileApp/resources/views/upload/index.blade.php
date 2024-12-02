@@ -9,20 +9,28 @@
                     <th>Image Preview</th>
                     <th>ID</th>
                     <th>Original Name</th>
-                    <th>Uploaded At</th>
+                    <th>Storage Name</th>
+                    <th>Created At</th>
+                    <th>Updated At</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($files as $file)
                     <tr>
                         <td>
-                            <img src="{{ route('upload.image', ['id' => $file->id]) }}" alt="{{ $file->original_name }}" style="width: 50px; height: auto;">
+                            <img src="{{ route('upload.image', ['id' => $file->id]) }}" 
+                                 alt="{{ $file->original_name }}" 
+                                 style="width: 50px; height: auto;">
                         </td>
                         <td>{{ $file->id }}</td>
                         <td>
-                            <a href="{{ route('upload.show', ['file' => $file->storage_name]) }}">{{ $file->original_name }}</a>
+                            <a href="{{ route('upload.show', ['file' => $file->storage_name]) }}">
+                                {{ $file->original_name }}
+                            </a>
                         </td>
-                        <td>{{ $file->created_at }}</td>
+                        <td>{{ $file->storage_name }}</td>
+                        <td>{{ $file->created_at->format('Y-m-d H:i:s') }}</td>
+                        <td>{{ $file->updated_at->format('Y-m-d H:i:s') }}</td>
                     </tr>
                 @endforeach
             </tbody>
