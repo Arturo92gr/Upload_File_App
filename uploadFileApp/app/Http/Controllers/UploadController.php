@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Storage; // para utilizar Storage
 
-class SubirControlador extends Controller
+class UploadController extends Controller
 {
     function img(Request $request, $file) {
         if(file_exists(storage_path('app/private/carpeta/') . $file)) {
