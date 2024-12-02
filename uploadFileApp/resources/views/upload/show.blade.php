@@ -1,0 +1,1 @@
+<img src="data:image/{{ $image->type }}; base64,{{ base64_encode($image->image) }}" alt="Se debería estar mostrando la imagen cargada.">

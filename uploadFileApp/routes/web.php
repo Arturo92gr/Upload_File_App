@@ -7,3 +7,4 @@ Route::get('/', [UploadController::class, 'index'])->name('upload.index');
 Route::post('upload', [UploadController::class, 'upload'])->name('upload.upload');
 Route::post('view', [UploadController::class, 'view'])->name('upload.view');
 Route::post('img/(file)', [UploadController::class, 'img'])->name('upload.img');
+Route::get('image/{id}', [ImageController::class, 'image'])->name('image');

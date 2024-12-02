@@ -12,3 +12,4 @@
     <img width="100" src="{{ url('storage/carpeta/imagen.png') }}" alt="">
 </body>
 </html>
+<!-- <img src="{{ url('image/137') }}" alt="..."> -->

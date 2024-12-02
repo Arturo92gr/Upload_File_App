@@ -7,9 +7,12 @@ use Illuminate\Http\Request;
 
 class UploadController extends Controller
 {
-    function img(Request $request, $file) {
-        if(file_exists(storage_path('app/private/carpeta/') . $file)) {
-            return response()->file(storage_path('app/private/carpeta/') . $file);
+    function image(Request $request, $id) {
+        $image = Image::find($id);
+        if(file_exists(storage_path('app/private') . '/' . $image->path)) {
+        return response()
+        ->file(storage_path('app/private') . '/' . $image->path);
+        
         }
         abort(404);
     }
@@ -18,43 +21,32 @@ class UploadController extends Controller
         return view ('upload.index');
     }
 
-    // con storeAs para guardar en directorio privado
-    function subir(Request $request) {
-        if($request->hasFile('file') && $request->file('file')->isValid()) {
-            $file = $request->file('file');
-            $nombreOriginal = $file->getClientOriginalName();
-            $path = $file->storeAs('carpeta', 'nueva_' . $nombreOriginal);  // guardar en private/carpeta con el nombre original
-            // $path = Storage::putFilesAs('carpeta', $file, $nombreOriginal);  // con método Storage, funciona como la línea superior
-            echo $path;
-        }
+    function show(Request $request, $id) {
+        $file = File::find($id);
+        return view('show', ['file' => $file]);
     }
 
-    // con move
-    function subir1(Request $request) {
-        //dd($request->file('file'));  // mostrar los datos de consulta
-        if($request->hasFile('file') && $request->file('file')->isValid()) {    //se llama file porque es el name del formulario
-            $file = $request->file('file');
-            // Guardarlo en la carpeta principal con el nombre z
-            $file->move('.', 'z');
-            // Guardarlo en la carpeta "carpeta" dentro del directorio actual
-            $file->move('carpeta', 'z');
-            // Guardarlo en la carpeta "carpeta" dentro de storage
-            $file->move('storage/carpeta', 'z');
-            //Guardar archivo con nombre original
-            $nombreOriginal = $file->getClientOriginalName();   // obtener nombre original
-            $file->move('.', $nombreOriginal);
-            $path = $file->move('storage/carpeta', $nombroOriginal);
-            echo $path;
-        }
-    }
-
-    // con store
-    function subir2(Request $request) {
+    function upload(Request $request) {
         if($request->hasFile('file') && $request->file('file')->isValid()) {
-            $file = $request->file('file');
-            $path = $file->store('carpeta', 'public');  // guardar en el directorio storage/public mediante store, renombrando automáticamente y manteniendo la extensión de archivo
-            //$path = Storage::putFile('carpeta', $file);    // funciona igual que la línea de arriba, solo puede haber uno
-            echo $path;
+        //el archivo se guarda en el storage private
+        $path = $request->file('file')->store('privado', 'local');
+        //se obtiene la ruta al archivo guardado
+        $realPath = storage_path('app/private') . '/' . $path;
+        //se obtiene el contenido del archivo
+        $data = file_get_contents($realPath);
+        //se obtiene el contenido del archivo en base 64
+        $base64 = base64_encode($data);
+        //se obtiene la extensión del archivo
+        $type = pathinfo($realPath, PATHINFO_EXTENSION);
+        //se construye el objeto que se va a almacenar en la base de datos
+        $file = new File();
+        $file->path = $path;
+        $file->image64 = $base64;
+        $file->image = $data;
+        $file->type = $type;
+        //se guarda el objeto en la base de datos
+        $file->save();
+        return redirect('...');
         }
     }
 
