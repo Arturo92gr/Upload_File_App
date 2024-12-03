@@ -12,7 +12,7 @@
                     <th>Storage Name</th>
                     <th>Created At</th>
                     <th>Updated At</th>
-                    <th>Actions</th>
+                    <th>Delete</th>
                 </tr>
             </thead>
             <tbody>
