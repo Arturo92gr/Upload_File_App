@@ -3,13 +3,13 @@ Aplicación para subida de archivos en Laravel con base de datos
 
 ## Contenido
 
-[Base de datos](#base-de-datos)  
-[Guardado de archivos](#guardado-de-archivos)  
-[Rutas](#rutas)  
-[Vistas](#vistas)  
-[Controlador](#controlador)  
-[Javascript](#javascript)  
-[Aspecto de la aplicación](#aspecto-de-la-aplicación)  
+- [Base de datos](#base-de-datos)  
+- [Guardado de archivos](#guardado-de-archivos)  
+- [Rutas](#rutas)  
+- [Vistas](#vistas)  
+- [Controlador](#controlador)  
+- [Javascript](#javascript)  
+- [Aspecto de la aplicación](#aspecto-de-la-aplicación)  
 
 <br>
 
@@ -31,7 +31,7 @@ Schema::create('upload', function (Blueprint $table) {
 
 ## Guardado de archivos
 
-Los archivos se van a guardar en el directorio *storage/app/private/exercise/*.
+Los archivos se van a guardar en el directorio `storage/app/private/exercise/`.
 
 <br>
 
@@ -51,7 +51,7 @@ Route::delete('delete/{id}', [UploadController::class, 'destroy'])->name('upload
 
 ## Vistas
 
-- `base.blade.ph`p: Main layout template
+- `base.blade.php`: Main layout template
 - `upload/create.blade.php`: Formulario de subida
 - `upload/index.blade.php`: Lista de archivos subidos
 - `upload/show.blade.php`: Vista individual
@@ -62,18 +62,19 @@ Route::delete('delete/{id}', [UploadController::class, 'destroy'])->name('upload
 
 El controlador UploadController se encarga de todas las operaciones:
 
-- index(): Muestrar todos los archivos o redirige a la creación si no hay ninguna entrada
-- create(): Mostrar el formulario de subida
-- store(): Manejar la carga de archivos
-- show(): Muestrar un archivo individual
-- image(): Muestrar un archivo individual
-- destroy(): Eliminar archivo
+- `index()`: Muestrar todos los archivos o redirige a la creación si no hay ninguna entrada
+- `create()`: Mostrar el formulario de subida
+- `store()`: Manejar la carga de archivos
+- `show()`: Muestrar un archivo individual
+- `image()`: Muestrar un archivo individual
+- `destroy()`: Eliminar archivo
 
 <br>
 
 ## Javascript
 
-Los archivos y entradas de la base de datos se eliminan mediante *script.js* en *public/assets/scripts/*. Tiene las sigueintes funcionalidades:
+Los archivos y entradas de la base de datos se eliminan mediante `public/assets/scripts/script.js`.  
+Tiene las siguientes funcionalidades:
 
 - Captura los click events en los enlaces *delete*.
 - Muestra el cuadro de diálogo de confirmación.
