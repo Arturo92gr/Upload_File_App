@@ -17,6 +17,11 @@ class UploadController extends Controller {
     public function index() 
     {
         $files = Upload::all();
+        
+        if ($files->isEmpty()) {
+            return redirect()->route('upload.create');
+        }
+        
         return view('upload.index', compact('files'));
     }
 
